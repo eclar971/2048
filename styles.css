@@ -1,0 +1,48 @@
+html {
+  margin: 0px;
+  font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+  color: #776e65
+}
+body {
+  margin: 0px;
+  background-color: #858585;
+}
+#container {
+  height: 81%;
+}
+#board {
+  margin: auto;
+  margin-top: 2%;
+  display: grid;
+  border: rgb(78, 78, 78) 5px solid;
+  border-radius: 5px;
+  width: 500px;
+  grid-template-columns: 25% 25% 25% 25%;
+}
+#board > div {
+  border: rgb(78, 78, 78) 5px solid;
+  font-weight: 800;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+#container > .instructions{
+  margin: auto;
+}
+.instructions{
+  font-size: 30px;
+  padding-top: 30px;
+  width: 500px;
+}
+.scoreBoard{
+  font-weight: 600;
+  width: 500px;
+  margin: auto;
+  margin-top: 8%;
+  display: grid;
+  grid-template-columns: auto auto;
+}
+#highScore{
+  text-align: right;
+}
