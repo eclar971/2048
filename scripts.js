@@ -159,7 +159,8 @@ function handleGesture() {
           evenStartingBlocks[getRandomIntInclusive(0, 2)];
       }
       refreshScreen(backendGame, rowSeperation);
-    } else if (touchendY < touchstartY) {
+    }
+    if (touchendY < touchstartY) {
       for (let i = 0; i < 4; i++) {
         currentColumn = [
           backendGame[0][i],
@@ -262,7 +263,8 @@ function handleGesture() {
           evenStartingBlocks[getRandomIntInclusive(0, 2)];
       }
       refreshScreen(backendGame, rowSeperation);
-    } else if (touchendX < touchstartX) {
+    }
+    if (touchendX < touchstartX) {
       for (let i = 0; i < 4; i++) {
         currentRow = backendGame[i];
         sortedRow = [...currentRow].sort(function (a, b) {
@@ -354,7 +356,8 @@ function handleGesture() {
           evenStartingBlocks[getRandomIntInclusive(0, 2)];
       }
       refreshScreen(backendGame, rowSeperation);
-    } else if (touchendX > touchstartX) {
+    }
+    if (touchendX > touchstartX) {
       for (let i = 0; i < 4; i++) {
         currentRow = backendGame[i];
         sortedRow = [...currentRow].sort(function (a, b) {
