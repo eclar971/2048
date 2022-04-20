@@ -1,7 +1,8 @@
 html {
   margin: 0px;
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
-  color: #776e65
+  color: #776e65;
+  overflow: hidden;
 }
 body {
   margin: 0px;
