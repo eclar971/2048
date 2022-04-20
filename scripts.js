@@ -264,7 +264,7 @@ function handleGesture() {
       }
       refreshScreen(backendGame, rowSeperation);
     }
-    if (touchendX < touchstartX - 100) {
+    if (touchendX < touchstartX - 50) {
       for (let i = 0; i < 4; i++) {
         currentRow = backendGame[i];
         sortedRow = [...currentRow].sort(function (a, b) {
@@ -357,7 +357,7 @@ function handleGesture() {
       }
       refreshScreen(backendGame, rowSeperation);
     }
-    if (touchendX > touchstartX + 100) {
+    if (touchendX > touchstartX + 50) {
       for (let i = 0; i < 4; i++) {
         currentRow = backendGame[i];
         sortedRow = [...currentRow].sort(function (a, b) {
