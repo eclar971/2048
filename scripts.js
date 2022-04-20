@@ -41,41 +41,40 @@ function refreshScreen(back, front) {
   score = 0;
   for (let i = 0; i < 4; i++) {
     for (let j = 0; j < 4; j++) {
-      if (back[i][j] == " ") {
-        front[i][j].style.backgroundColor = "#6e6e6e";
+      if (" " == back[i][j]) {
+        front[i][j].style.backgroundColor = "";
+      } else if (2 == back[i][j]) {
+        front[i][j].style.backgroundColor = "#00c9c9";
+        front[i][j].style.color = "";
+      } else if (4 == back[i][j]) {
+        front[i][j].style.backgroundColor = "cadetblue";
+        front[i][j].style.color = "";
+      } else if (8 == back[i][j]) {
+        front[i][j].style.backgroundColor = "#3b7375";
         front[i][j].style.color = "lightgrey";
-      } else if (back[i][j] == 2) {
-        front[i][j].style.backgroundColor = "teal";
+      } else if (16 == back[i][j]) {
+        front[i][j].style.backgroundColor = "#26494b";
         front[i][j].style.color = "lightgrey";
-      } else if (back[i][j] == 4) {
-        front[i][j].style.backgroundColor = "#00315e";
+      } else if (32 == back[i][j]) {
+        front[i][j].style.backgroundColor = "#26364b";
         front[i][j].style.color = "lightgrey";
-      } else if (back[i][j] == 8) {
-        front[i][j].style.backgroundColor = "#005523";
+      } else if (64 == back[i][j]) {
+        front[i][j].style.backgroundColor = "#31264b";
         front[i][j].style.color = "lightgrey";
-      } else if (back[i][j] == 16) {
-        front[i][j].style.backgroundColor = "#535500";
+      } else if (128 == back[i][j]) {
+        front[i][j].style.backgroundColor = "indigo";
         front[i][j].style.color = "lightgrey";
-      } else if (back[i][j] == 32) {
-        front[i][j].style.backgroundColor = "#553a00";
+      } else if (256 == back[i][j]) {
+        front[i][j].style.backgroundColor = "purple";
         front[i][j].style.color = "lightgrey";
-      } else if (back[i][j] == 64) {
-        front[i][j].style.backgroundColor = "#8a2c00";
-        front[i][j].style.color = "lightgrey";
-      } else if (back[i][j] == 128) {
-        front[i][j].style.backgroundColor = "#7e513e";
-        front[i][j].style.color = "lightgrey";
-      } else if (back[i][j] == 256) {
-        front[i][j].style.backgroundColor = "#5e1300";
-        front[i][j].style.color = "lightgrey";
-      } else if (back[i][j] == 512) {
-        front[i][j].style.backgroundColor = "#bd8b75";
-        front[i][j].style.color = "lightgrey";
-      } else if (back[i][j] == 1024) {
-        front[i][j].style.backgroundColor = "#946000";
-        front[i][j].style.color = "lightgrey";
-      } else if (back[i][j] == 2048) {
-        front[i][j].style.backgroundColor = "goldenRod";
+      } else if (512 == back[i][j]) {
+        front[i][j].style.backgroundColor = "#cc8994";
+        front[i][j].style.color = "";
+      } else if (1024 == back[i][j]) {
+        front[i][j].style.backgroundColor = "pink";
+        front[i][j].style.color = "";
+      } else if (2048 == back[i][j]) {
+        front[i][j].style.backgroundColor = "goldenrod";
         front[i][j].style.color = "";
       } else {
         front[i][j].style.backgroundColor = "black";
