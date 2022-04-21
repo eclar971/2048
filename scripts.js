@@ -24,8 +24,6 @@ window.addEventListener('touchend', function (event) {
   touchendY = event.changedTouches[0].screenY;
   handleGesture();
 }, false);
-
-
 function handleGesture() {
   gameOver = true;
   blankSpaces = false;
@@ -568,6 +566,7 @@ function refreshScreen(back, front) {
 }
 window.onload = function () {
   var myCanvasEl = document.getElementById("board");
+  myCanvasEl.style.height = myCanvasEl.offsetWidth
   children = myCanvasEl.children;
   width = children[0].offsetWidth;
   var listChildren = Array.from(children);
@@ -577,9 +576,12 @@ window.onload = function () {
     [listChildren[8], listChildren[9], listChildren[10], listChildren[11]],
     [listChildren[12], listChildren[13], listChildren[14], listChildren[15]],
   ];
-  for (let i = 0; i < children.length; i++) {
-    currentChild = children[i];
-    currentChild.style.height = width - 10;
+  if(!navigator.userAgentData.mobile){
+    myCanvasEl.style.width = "500px"
+    myCanvasEl.style.height = "500px"
+  }else{
+    myCanvasEl.style.width = "80%"
+    myCanvasEl.style.height = ""
   }
   startingSquares = getRandomIntInclusive(2, 3);
   for (let i = 0; i < startingSquares; i++) {
@@ -598,9 +600,12 @@ window.addEventListener("resize", function () {
   var myCanvasEl = document.getElementById("board");
   children = myCanvasEl.children;
   width = children[0].offsetWidth;
-  for (let i = 0; i < children.length; i++) {
-    currentChild = children[i];
-    currentChild.style.height = width - 10;
+  if(!navigator.userAgentData.mobile){
+    myCanvasEl.style.width = "500px"
+    myCanvasEl.style.height = "500px"
+  }else{
+    myCanvasEl.style.width = "80%"
+    myCanvasEl.style.height = ""
   }
 });
 ///setInterval(function () {
