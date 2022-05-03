@@ -1,17 +1,18 @@
 html {
   margin: 0px;
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
-  color: #776e65;
-  overflow: hidden;
+  color: rgb(78, 78, 78)
 }
 body {
   margin: 0px;
   background-color: #858585;
 }
 #container {
-  margin: auto;
-  width: 100%;
-  height: 100%;
+  height: 81%;
+}
+select{
+  border-color: rgb(78, 78, 78);
+  background-color: #858585;
 }
 #board {
   margin: auto;
@@ -19,17 +20,16 @@ body {
   display: grid;
   border: rgb(78, 78, 78) 5px solid;
   border-radius: 5px;
-  width: 80%;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  width: 500px;
+  grid-template-columns: 25% 25% 25% 25% ;
 }
 #board > div {
-  aspect-ratio: 1;
   border: rgb(78, 78, 78) 5px solid;
   font-weight: 800;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-collapse: collapse;
+  height: 200px;
 }
 #container > .instructions{
   margin: auto;
@@ -42,9 +42,8 @@ body {
 .scoreBoard{
   font-weight: 600;
   width: 500px;
-  font-size: 30px;
   margin: auto;
-  padding-top: 3%;
+  margin-top: 8%;
   display: grid;
   grid-template-columns: auto auto;
 }
