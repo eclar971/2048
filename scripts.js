@@ -81,91 +81,46 @@ function handleGesture() {
       gameOver = false;
     }
   }
-  if (!gameOver) {
+  if (!gameOver) {  
     if (touchendY > touchstartY) {
-      for (let i = 0; i < 4; i++) {
-        currentColumn = [
-          backendGame[0][i],
-          backendGame[1][i],
-          backendGame[2][i],
-          backendGame[3][i],
-        ];
+      for (let i = 0; i < numOfBlocks; i++) {
+        currentColumn = [];
+        for (let j = 0; j < numOfBlocks; j++) {
+          currentColumn.push(backendGame[j][i]);
+        }
         sortedColumn = [...currentColumn].sort(function (a, b) {
           return a - b;
         });
-        highestVal = sortedColumn[3];
-        for (let j = highestVal; j >= 2; j /= 2) {
-          checkForDupe(currentColumn, j);
-          hasDupes = [...indices];
-          hasDupes.sort();
-          if (hasDupes.length > 1) {
-            if (hasDupes.length == 3) {
-              if (hasDupes[2] - hasDupes[1] == 1) {
-                currentColumn[hasDupes[2]] =
-                  currentColumn[hasDupes[1]] + currentColumn[hasDupes[2]];
-                currentColumn[hasDupes[1]] = " ";
-              } else if (currentRow[hasDupes[2] - 1] == " ") {
-                currentColumn[hasDupes[2]] =
-                  currentColumn[hasDupes[1]] + currentColumn[hasDupes[2]];
-                currentColumn[hasDupes[1]] = " ";
-              } else if (hasDupes[1] - hasDupes[0] == 1) {
-                currentColumn[hasDupes[1]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[0]] = " ";
-              }
-            } else if (hasDupes.length == 4) {
-              currentColumn[hasDupes[3]] =
-                currentColumn[hasDupes[2]] + currentColumn[hasDupes[3]];
-              currentColumn[hasDupes[2]] = " ";
-              currentColumn[hasDupes[1]] =
-                currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-              currentColumn[hasDupes[0]] = " ";
-            } else if (
-              currentColumn[hasDupes[0]] == currentColumn[hasDupes[1]]
-            ) {
-              if (hasDupes[1] - hasDupes[0] == 1) {
-                currentColumn[hasDupes[1]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[0]] = " ";
-              } else if (
-                currentColumn[hasDupes[0] + 1] == " " &&
-                currentColumn[hasDupes[0] + 2] == currentColumn[hasDupes[1]]
-              ) {
-                currentColumn[hasDupes[1]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[0]] = " ";
-              } else if (
-                currentColumn[hasDupes[0] + 1] == " " &&
-                currentColumn[hasDupes[0] + 2] == " " &&
-                currentColumn[hasDupes[0] + 3] == currentColumn[hasDupes[1]]
-              ) {
-                currentColumn[hasDupes[1]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[0]] = " ";
-              }
+        highestVal = sortedColumn[numOfBlocks - 1];
+        const noSpaceCol = currentColumn.filter(function (x) {
+          return x !== " ";
+        });
+        if (consecutiveEqualElements(noSpaceCol) > 1) {
+          for (let k = ceeLocation.length - 1; k > 0; k = k - 2) {
+            if (ceeLocation[k] != ceeLocation[k + 1]) {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k]] * 2;
+              noSpaceCol[ceeLocation[k - 1]] = " ";
+            } else {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k - 1]];
+              noSpaceCol[ceeLocation[k - 1]] = " ";
             }
           }
         }
-        for (
-          let k = 0;
-          k < 4 - currentColumn.filter((x) => x == " ").length;
-          k++
-        ) {
-          for (let j = 0; j < 3; j++) {
-            if (currentColumn[j] != " " && currentColumn[j + 1] == " ") {
-              currentColumn[j + 1] = currentColumn[j];
-              currentColumn[j] = " ";
-            }
-          }
+        currentColumn = [];
+        for (let p = 0; p < numOfBlocks - noSpaceCol.length; p++) {
+          currentColumn.push(" ");
         }
-        backendGame[0][i] = currentColumn[0];
-        backendGame[1][i] = currentColumn[1];
-        backendGame[2][i] = currentColumn[2];
-        backendGame[3][i] = currentColumn[3];
+        for (let p = 0; p < noSpaceCol.length; p++) {
+          currentColumn.push(noSpaceCol[p]);
+        }
+
+        for (let j = 0; j < numOfBlocks; j++) {
+          backendGame[j][i] = currentColumn[j];
+        }
       }
-      blockRow = getRandomIntInclusive(0, 3);
-      blockRColumn = getRandomIntInclusive(0, 3);
-      for (let i = 0; i < 4; i++) {
+      blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+      blockRColumn = getRandomIntInclusive(0, numOfBlocks - 1);
+      for (let i = 0; i < numOfBlocks; i++) {
         if (backendGame[i].includes(" ")) {
           blankSpaces = true;
         }
@@ -173,13 +128,13 @@ function handleGesture() {
       if (blankSpaces) {
         while (backendGame[blockRColum][blockRow] != " " && blankSpaces) {
           blankSpaces = false;
-          for (let i = 0; i < 4; i++) {
+          for (let i = 0; i < numOfBlocks; i++) {
             if (backendGame[i].includes(" ")) {
               blankSpaces = true;
             }
           }
-          blockRow = getRandomIntInclusive(0, 3);
-          blockRColum = getRandomIntInclusive(0, 3);
+          blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+          blockRColum = getRandomIntInclusive(0, numOfBlocks - 1);
         }
         backendGame[blockRColum][blockRow] =
           evenStartingBlocks[getRandomIntInclusive(0, 2)];
@@ -187,89 +142,43 @@ function handleGesture() {
       refreshScreen(backendGame, rowSeperation);
     }
     if (touchendY < touchstartY) {
-      for (let i = 0; i < 4; i++) {
-        currentColumn = [
-          backendGame[0][i],
-          backendGame[1][i],
-          backendGame[2][i],
-          backendGame[3][i],
-        ];
+      for (let i = 0; i < numOfBlocks; i++) {
+        currentColumn = [];
+        for (let j = 0; j < numOfBlocks; j++) {
+          currentColumn.push(backendGame[j][i]);
+        }
         sortedColumn = [...currentColumn].sort(function (a, b) {
           return a - b;
         });
-        highestVal = sortedColumn[3];
-        for (let j = highestVal; j >= 2; j /= 2) {
-          checkForDupe(currentColumn, j);
-          hasDupes = [...indices];
-          hasDupes.sort();
-          if (hasDupes.length > 1) {
-            if (hasDupes.length == 3) {
-              if (hasDupes[1] - hasDupes[0] == 1) {
-                currentColumn[hasDupes[0]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[1]] = " ";
-              } else if (currentColumn[hasDupes[0] + 1] == " ") {
-                currentColumn[hasDupes[1]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[0]] = " ";
-              } else if (hasDupes[2] - hasDupes[1] == 1) {
-                currentColumn[hasDupes[1]] =
-                  currentColumn[hasDupes[1]] + currentColumn[hasDupes[2]];
-                currentColumn[hasDupes[2]] = " ";
-              }
-            } else if (hasDupes.length == 4) {
-              currentColumn[hasDupes[0]] =
-                currentColumn[hasDupes[1]] + currentColumn[hasDupes[0]];
-              currentColumn[hasDupes[1]] = " ";
-              currentColumn[hasDupes[2]] =
-                currentColumn[hasDupes[2]] + currentColumn[hasDupes[3]];
-              currentColumn[hasDupes[3]] = " ";
-            } else if (
-              currentColumn[hasDupes[0]] == currentColumn[hasDupes[1]]
-            ) {
-              if (hasDupes[1] - hasDupes[0] == 1) {
-                currentColumn[hasDupes[0]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[1]] = " ";
-              } else if (
-                currentColumn[hasDupes[0] + 1] == " " &&
-                currentColumn[hasDupes[0] + 2] == currentColumn[hasDupes[1]]
-              ) {
-                currentColumn[hasDupes[0]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[1]] = " ";
-              } else if (
-                currentColumn[hasDupes[0] + 1] == " " &&
-                currentColumn[hasDupes[0] + 2] == " " &&
-                currentColumn[hasDupes[0] + 3] == currentColumn[hasDupes[1]]
-              ) {
-                currentColumn[hasDupes[0]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[1]] = " ";
-              }
+        highestVal = sortedColumn[numOfBlocks - 1];
+        const noSpaceCol = currentColumn.filter(function (x) {
+          return x !== " ";
+        });
+        if (consecutiveEqualElements(noSpaceCol) > 1)
+          for (let k = 0; k < ceeLocation.length - 1; k = k + 2) {
+            if (ceeLocation[k] != ceeLocation[k - 1]) {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k]] * 2;
+              noSpaceCol[ceeLocation[k + 1]] = " ";
+            } else {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k + 1]];
+              noSpaceCol[ceeLocation[k + 1]] = " ";
             }
           }
+        currentColumn = [];
+        for (let p = 0; p < noSpaceCol.length; p++) {
+          currentColumn.push(noSpaceCol[p]);
         }
-        for (
-          let k = 0;
-          k < 4 - currentColumn.filter((x) => x == " ").length;
-          k++
-        ) {
-          for (let j = 3; j > 0; j = j - 1) {
-            if (currentColumn[j] != " " && currentColumn[j - 1] == " ") {
-              currentColumn[j - 1] = currentColumn[j];
-              currentColumn[j] = " ";
-            }
-          }
+        for (let p = 0; p < numOfBlocks - noSpaceCol.length; p++) {
+          currentColumn.push(" ");
         }
-        backendGame[0][i] = currentColumn[0];
-        backendGame[1][i] = currentColumn[1];
-        backendGame[2][i] = currentColumn[2];
-        backendGame[3][i] = currentColumn[3];
+
+        for (let j = 0; j < numOfBlocks; j++) {
+          backendGame[j][i] = currentColumn[j];
+        }
       }
-      blockRow = getRandomIntInclusive(0, 3);
-      blockRColumn = getRandomIntInclusive(0, 3);
-      for (let i = 0; i < 4; i++) {
+      blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+      blockRColumn = getRandomIntInclusive(0, numOfBlocks - 1);
+      for (let i = 0; i < numOfBlocks; i++) {
         if (backendGame[i].includes(" ")) {
           blankSpaces = true;
         }
@@ -277,13 +186,13 @@ function handleGesture() {
       if (blankSpaces) {
         while (backendGame[blockRColum][blockRow] != " " && blankSpaces) {
           blankSpaces = false;
-          for (let i = 0; i < 4; i++) {
+          for (let i = 0; i < numOfBlocks; i++) {
             if (backendGame[i].includes(" ")) {
               blankSpaces = true;
             }
           }
-          blockRow = getRandomIntInclusive(0, 3);
-          blockRColum = getRandomIntInclusive(0, 3);
+          blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+          blockRColum = getRandomIntInclusive(0, numOfBlocks - 1);
         }
         backendGame[blockRColum][blockRow] =
           evenStartingBlocks[getRandomIntInclusive(0, 2)];
@@ -291,78 +200,37 @@ function handleGesture() {
       refreshScreen(backendGame, rowSeperation);
     }
     if (touchendX < touchstartX) {
-      for (let i = 0; i < 4; i++) {
-        currentRow = backendGame[i];
-        sortedRow = [...currentRow].sort(function (a, b) {
+      for (let i = 0; i < numOfBlocks; i++) {
+        currentRow = backendGame[i]
+        sortedColumn = [...currentRow].sort(function (a, b) {
           return a - b;
         });
-        highestVal = sortedRow[3];
-        for (let j = highestVal; j >= 2; j /= 2) {
-          checkForDupe(currentRow, j);
-          hasDupes = [...indices];
-          hasDupes.sort();
-          if (hasDupes.length > 1) {
-            if (hasDupes.length == 3) {
-              if (hasDupes[1] - hasDupes[0] == 1) {
-                currentRow[hasDupes[1]] =
-                  currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-                currentRow[hasDupes[0]] = " ";
-              } else if (currentRow[hasDupes[0] + 1] == " ") {
-                currentRow[hasDupes[1]] =
-                  currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-                currentRow[hasDupes[0]] = " ";
-              } else if (hasDupes[2] - hasDupes[1] == 1) {
-                currentRow[hasDupes[2]] =
-                  currentRow[hasDupes[1]] + currentRow[hasDupes[2]];
-                currentRow[hasDupes[1]] = " ";
-              }
-            } else if (hasDupes.length == 4) {
-              currentRow[hasDupes[0]] =
-                currentRow[hasDupes[1]] + currentRow[hasDupes[0]];
-              currentRow[hasDupes[1]] = " ";
-              currentRow[hasDupes[2]] =
-                currentRow[hasDupes[2]] + currentRow[hasDupes[3]];
-              currentRow[hasDupes[3]] = " ";
-            } else if (currentRow[hasDupes[0]] == currentRow[hasDupes[1]]) {
-              if (hasDupes[1] - hasDupes[0] == 1) {
-                currentRow[hasDupes[0]] =
-                  currentRow[hasDupes[1]] + currentRow[hasDupes[0]];
-                currentRow[hasDupes[1]] = " ";
-              } else if (
-                currentRow[hasDupes[0] + 1] == " " &&
-                currentRow[hasDupes[0] + 2] == currentRow[hasDupes[1]]
-              ) {
-                currentRow[hasDupes[0]] =
-                  currentRow[hasDupes[1]] + currentRow[hasDupes[0]];
-                currentRow[hasDupes[1]] = " ";
-              } else if (
-                currentRow[hasDupes[0] + 1] == " " &&
-                currentRow[hasDupes[0] + 2] == " " &&
-                currentRow[hasDupes[0] + 3] == currentRow[hasDupes[1]]
-              ) {
-                currentRow[hasDupes[0]] =
-                  currentRow[hasDupes[1]] + currentRow[hasDupes[0]];
-                currentRow[hasDupes[1]] = " ";
-              }
+        highestVal = sortedColumn[numOfBlocks - 1];
+        const noSpaceCol = currentRow.filter(function (x) {
+          return x !== " ";
+        });
+        if (consecutiveEqualElements(noSpaceCol) > 1)
+          for (let k = 0; k < ceeLocation.length - 1; k = k + 2) {
+            if (ceeLocation[k] != ceeLocation[k - 1]) {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k]] * 2;
+              noSpaceCol[ceeLocation[k + 1]] = " ";
+            } else {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k + 1]];
+              noSpaceCol[ceeLocation[k + 1]] = " ";
             }
           }
+        currentRow = [];
+        for (let p = 0; p < noSpaceCol.length; p++) {
+          currentRow.push(noSpaceCol[p]);
         }
-        for (
-          let k = 0;
-          k < 4 - currentRow.filter((x) => x == " ").length;
-          k++
-        ) {
-          for (let j = 3; j > 0; j = j - 1) {
-            if (currentRow[j] != " " && currentRow[j - 1] == " ") {
-              currentRow[j - 1] = currentRow[j];
-              currentRow[j] = " ";
-            }
-          }
+        for (let p = 0; p < numOfBlocks - noSpaceCol.length; p++) {
+          currentRow.push(" ");
         }
+        backendGame[i] = currentRow
       }
-      blockRow = getRandomIntInclusive(0, 3);
-      blockRColum = getRandomIntInclusive(0, 3);
-      for (let i = 0; i < 4; i++) {
+      blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+      blockRColumn = getRandomIntInclusive(0, numOfBlocks - 1);
+      for (let i = 0; i < numOfBlocks; i++) {
         if (backendGame[i].includes(" ")) {
           blankSpaces = true;
         }
@@ -370,13 +238,13 @@ function handleGesture() {
       if (blankSpaces) {
         while (backendGame[blockRColum][blockRow] != " " && blankSpaces) {
           blankSpaces = false;
-          for (let i = 0; i < 4; i++) {
+          for (let i = 0; i < numOfBlocks; i++) {
             if (backendGame[i].includes(" ")) {
               blankSpaces = true;
             }
           }
-          blockRow = getRandomIntInclusive(0, 3);
-          blockRColum = getRandomIntInclusive(0, 3);
+          blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+          blockRColum = getRandomIntInclusive(0, numOfBlocks - 1);
         }
         backendGame[blockRColum][blockRow] =
           evenStartingBlocks[getRandomIntInclusive(0, 2)];
@@ -384,78 +252,38 @@ function handleGesture() {
       refreshScreen(backendGame, rowSeperation);
     }
     if (touchendX > touchstartX) {
-      for (let i = 0; i < 4; i++) {
-        currentRow = backendGame[i];
-        sortedRow = [...currentRow].sort(function (a, b) {
+      for (let i = 0; i < numOfBlocks; i++) {
+        currentRow = backendGame[i]
+        sortedColumn = [...currentRow].sort(function (a, b) {
           return a - b;
         });
-        highestVal = sortedRow[3];
-        for (let j = highestVal; j >= 2; j /= 2) {
-          checkForDupe(currentRow, j);
-          hasDupes = [...indices];
-          hasDupes.sort();
-          if (hasDupes.length > 1) {
-            if (hasDupes.length == 3) {
-              if (hasDupes[2] - hasDupes[1] == 1) {
-                currentRow[hasDupes[2]] =
-                  currentRow[hasDupes[1]] + currentRow[hasDupes[2]];
-                currentRow[hasDupes[1]] = " ";
-              } else if (currentRow[hasDupes[2] - 1] == " ") {
-                currentRow[hasDupes[2]] =
-                  currentRow[hasDupes[1]] + currentRow[hasDupes[2]];
-                currentRow[hasDupes[1]] = " ";
-              } else if (hasDupes[1] - hasDupes[0] == 1) {
-                currentRow[hasDupes[1]] =
-                  currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-                currentRow[hasDupes[0]] = " ";
-              }
-            } else if (hasDupes.length == 4) {
-              currentRow[hasDupes[3]] =
-                currentRow[hasDupes[2]] + currentRow[hasDupes[3]];
-              currentRow[hasDupes[2]] = " ";
-              currentRow[hasDupes[1]] =
-                currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-              currentRow[hasDupes[0]] = " ";
-            } else if (currentRow[hasDupes[0]] == currentRow[hasDupes[1]]) {
-              if (hasDupes[1] - hasDupes[0] == 1) {
-                currentRow[hasDupes[1]] =
-                  currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-                currentRow[hasDupes[0]] = " ";
-              } else if (
-                currentRow[hasDupes[0] + 1] == " " &&
-                currentRow[hasDupes[0] + 2] == currentRow[hasDupes[1]]
-              ) {
-                currentRow[hasDupes[1]] =
-                  currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-                currentRow[hasDupes[0]] = " ";
-              } else if (
-                currentRow[hasDupes[0] + 1] == " " &&
-                currentRow[hasDupes[0] + 2] == " " &&
-                currentRow[hasDupes[0] + 3] == currentRow[hasDupes[1]]
-              ) {
-                currentRow[hasDupes[1]] =
-                  currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-                currentRow[hasDupes[0]] = " ";
-              }
+        highestVal = sortedColumn[numOfBlocks - 1];
+        const noSpaceCol = currentRow.filter(function (x) {
+          return x !== " ";
+        });
+        if (consecutiveEqualElements(noSpaceCol) > 1) {
+          for (let k = ceeLocation.length - 1; k > 0; k = k - 2) {
+            if (ceeLocation[k] != ceeLocation[k + 1]) {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k]] * 2;
+              noSpaceCol[ceeLocation[k - 1]] = " ";
+            } else {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k - 1]];
+              noSpaceCol[ceeLocation[k - 1]] = " ";
             }
           }
         }
-        for (
-          let k = 0;
-          k < 4 - currentRow.filter((x) => x == " ").length;
-          k++
-        ) {
-          for (let j = 0; j < 3; j++) {
-            if (currentRow[j] != " " && currentRow[j + 1] == " ") {
-              currentRow[j + 1] = currentRow[j];
-              currentRow[j] = " ";
-            }
-          }
+        currentRow = [];
+        for (let p = 0; p < numOfBlocks - noSpaceCol.length; p++) {
+          currentRow.push(" ");
         }
+        for (let p = 0; p < noSpaceCol.length; p++) {
+          currentRow.push(noSpaceCol[p]);
+        }
+        backendGame[i] = currentRow;
       }
-      blockRow = getRandomIntInclusive(0, 3);
-      blockRColum = getRandomIntInclusive(0, 3);
-      for (let i = 0; i < 4; i++) {
+      blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+      blockRColumn = getRandomIntInclusive(0, numOfBlocks - 1);
+      for (let i = 0; i < numOfBlocks; i++) {
         if (backendGame[i].includes(" ")) {
           blankSpaces = true;
         }
@@ -463,13 +291,13 @@ function handleGesture() {
       if (blankSpaces) {
         while (backendGame[blockRColum][blockRow] != " " && blankSpaces) {
           blankSpaces = false;
-          for (let i = 0; i < 4; i++) {
+          for (let i = 0; i < numOfBlocks; i++) {
             if (backendGame[i].includes(" ")) {
               blankSpaces = true;
             }
           }
-          blockRow = getRandomIntInclusive(0, 3);
-          blockRColum = getRandomIntInclusive(0, 3);
+          blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+          blockRColum = getRandomIntInclusive(0, numOfBlocks - 1);
         }
         backendGame[blockRColum][blockRow] =
           evenStartingBlocks[getRandomIntInclusive(0, 2)];
@@ -483,39 +311,7 @@ function handleGesture() {
         "High Score: " + highScore;
     }
     window.alert("Game Over");
-    keys = [];
-    backendGame = [
-      [" ", " ", " ", " "],
-      [" ", " ", " ", " "],
-      [" ", " ", " ", " "],
-      [" ", " ", " ", " "],
-    ];
-    var myCanvasEl = document.getElementById("board");
-    children = myCanvasEl.children;
-    width = children[0].offsetWidth;
-    var listChildren = Array.from(children);
-    rowSeperation = [
-      [listChildren[0], listChildren[1], listChildren[2], listChildren[3]],
-      [listChildren[4], listChildren[5], listChildren[6], listChildren[7]],
-      [listChildren[8], listChildren[9], listChildren[10], listChildren[11]],
-      [listChildren[12], listChildren[13], listChildren[14], listChildren[15]],
-    ];
-    for (let i = 0; i < children.length; i++) {
-      currentChild = children[i];
-      currentChild.style.height = width - 10;
-    }
-    startingSquares = getRandomIntInclusive(2, 3);
-    for (let i = 0; i < startingSquares; i++) {
-      blockRow = getRandomIntInclusive(0, 3);
-      blockRColum = getRandomIntInclusive(0, 3);
-      while (backendGame[blockRColum][blockRow] != " ") {
-        blockRow = getRandomIntInclusive(0, 3);
-        blockRColum = getRandomIntInclusive(0, 3);
-      }
-      backendGame[blockRColum][blockRow] =
-        evenStartingBlocks[getRandomIntInclusive(0, 2)];
-      refreshScreen(backendGame, rowSeperation);
-    }
+    reload();
   }
 }
 function chunkArrayInGroups(arr, size) {
@@ -700,24 +496,26 @@ window.addEventListener("keydown", function movement(obj) {
           return a - b;
         });
         highestVal = sortedColumn[numOfBlocks - 1];
-        for (let j = highestVal; j >= 2; j /= 2) {
-          const noSpaceCol = currentColumn.filter(function (x) {
-            return x !== " ";
-          });
-          if (consecutiveEqualElements(noSpaceCol) > 1)
-            for (let k = ceeLocation.length - 1; k > 0; k = k - 2) {
-              if (ceeLocation[k + 1] != ceeLocation[k]) {
-                noSpaceCol[k] = noSpaceCol[k] * 2;
-                noSpaceCol[k - 1] = " ";
-              }
+        const noSpaceCol = currentColumn.filter(function (x) {
+          return x !== " ";
+        });
+        if (consecutiveEqualElements(noSpaceCol) > 1) {
+          for (let k = ceeLocation.length - 1; k > 0; k = k - 2) {
+            if (ceeLocation[k] != ceeLocation[k + 1]) {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k]] * 2;
+              noSpaceCol[ceeLocation[k - 1]] = " ";
+            } else {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k - 1]];
+              noSpaceCol[ceeLocation[k - 1]] = " ";
             }
-          currentColumn = [];
-          for (let p = 0; p < numOfBlocks - noSpaceCol.length; p++) {
-            currentColumn.push(" ");
           }
-          for (let p = 0; p < noSpaceCol.length; p++) {
-            currentColumn.push(noSpaceCol[p]);
-          }
+        }
+        currentColumn = [];
+        for (let p = 0; p < numOfBlocks - noSpaceCol.length; p++) {
+          currentColumn.push(" ");
+        }
+        for (let p = 0; p < noSpaceCol.length; p++) {
+          currentColumn.push(noSpaceCol[p]);
         }
 
         for (let j = 0; j < numOfBlocks; j++) {
@@ -747,7 +545,7 @@ window.addEventListener("keydown", function movement(obj) {
       }
       refreshScreen(backendGame, rowSeperation);
     } else if (keys["ArrowUp"]) {
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < numOfBlocks; i++) {
         currentColumn = [];
         for (let j = 0; j < numOfBlocks; j++) {
           currentColumn.push(backendGame[j][i]);
@@ -755,79 +553,35 @@ window.addEventListener("keydown", function movement(obj) {
         sortedColumn = [...currentColumn].sort(function (a, b) {
           return a - b;
         });
-        highestVal = sortedColumn[3];
-        for (let j = highestVal; j >= 2; j /= 2) {
-          checkForDupe(currentColumn, j);
-          hasDupes = [...indices];
-          hasDupes.sort();
-          if (hasDupes.length > 1) {
-            if (hasDupes.length == 3) {
-              if (hasDupes[1] - hasDupes[0] == 1) {
-                currentColumn[hasDupes[0]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[1]] = " ";
-              } else if (currentColumn[hasDupes[0] + 1] == " ") {
-                currentColumn[hasDupes[1]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[0]] = " ";
-              } else if (hasDupes[2] - hasDupes[1] == 1) {
-                currentColumn[hasDupes[1]] =
-                  currentColumn[hasDupes[1]] + currentColumn[hasDupes[2]];
-                currentColumn[hasDupes[2]] = " ";
-              }
-            } else if (hasDupes.length == 4) {
-              currentColumn[hasDupes[0]] =
-                currentColumn[hasDupes[1]] + currentColumn[hasDupes[0]];
-              currentColumn[hasDupes[1]] = " ";
-              currentColumn[hasDupes[2]] =
-                currentColumn[hasDupes[2]] + currentColumn[hasDupes[3]];
-              currentColumn[hasDupes[3]] = " ";
-            } else if (
-              currentColumn[hasDupes[0]] == currentColumn[hasDupes[1]]
-            ) {
-              if (hasDupes[1] - hasDupes[0] == 1) {
-                currentColumn[hasDupes[0]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[1]] = " ";
-              } else if (
-                currentColumn[hasDupes[0] + 1] == " " &&
-                currentColumn[hasDupes[0] + 2] == currentColumn[hasDupes[1]]
-              ) {
-                currentColumn[hasDupes[0]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[1]] = " ";
-              } else if (
-                currentColumn[hasDupes[0] + 1] == " " &&
-                currentColumn[hasDupes[0] + 2] == " " &&
-                currentColumn[hasDupes[0] + 3] == currentColumn[hasDupes[1]]
-              ) {
-                currentColumn[hasDupes[0]] =
-                  currentColumn[hasDupes[0]] + currentColumn[hasDupes[1]];
-                currentColumn[hasDupes[1]] = " ";
-              }
+        highestVal = sortedColumn[numOfBlocks - 1];
+        const noSpaceCol = currentColumn.filter(function (x) {
+          return x !== " ";
+        });
+        if (consecutiveEqualElements(noSpaceCol) > 1)
+          for (let k = 0; k < ceeLocation.length - 1; k = k + 2) {
+            if (ceeLocation[k] != ceeLocation[k - 1]) {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k]] * 2;
+              noSpaceCol[ceeLocation[k + 1]] = " ";
+            } else {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k + 1]];
+              noSpaceCol[ceeLocation[k + 1]] = " ";
             }
           }
+        currentColumn = [];
+        for (let p = 0; p < noSpaceCol.length; p++) {
+          currentColumn.push(noSpaceCol[p]);
         }
-        for (
-          let k = 0;
-          k < 4 - currentColumn.filter((x) => x == " ").length;
-          k++
-        ) {
-          for (let j = 3; j > 0; j = j - 1) {
-            if (currentColumn[j] != " " && currentColumn[j - 1] == " ") {
-              currentColumn[j - 1] = currentColumn[j];
-              currentColumn[j] = " ";
-            }
-          }
+        for (let p = 0; p < numOfBlocks - noSpaceCol.length; p++) {
+          currentColumn.push(" ");
         }
-        backendGame[0][i] = currentColumn[0];
-        backendGame[1][i] = currentColumn[1];
-        backendGame[2][i] = currentColumn[2];
-        backendGame[3][i] = currentColumn[3];
+
+        for (let j = 0; j < numOfBlocks; j++) {
+          backendGame[j][i] = currentColumn[j];
+        }
       }
-      blockRow = getRandomIntInclusive(0, 3);
-      blockRColumn = getRandomIntInclusive(0, 3);
-      for (let i = 0; i < 4; i++) {
+      blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+      blockRColumn = getRandomIntInclusive(0, numOfBlocks - 1);
+      for (let i = 0; i < numOfBlocks; i++) {
         if (backendGame[i].includes(" ")) {
           blankSpaces = true;
         }
@@ -835,91 +589,50 @@ window.addEventListener("keydown", function movement(obj) {
       if (blankSpaces) {
         while (backendGame[blockRColum][blockRow] != " " && blankSpaces) {
           blankSpaces = false;
-          for (let i = 0; i < 4; i++) {
+          for (let i = 0; i < numOfBlocks; i++) {
             if (backendGame[i].includes(" ")) {
               blankSpaces = true;
             }
           }
-          blockRow = getRandomIntInclusive(0, 3);
-          blockRColum = getRandomIntInclusive(0, 3);
+          blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+          blockRColum = getRandomIntInclusive(0, numOfBlocks - 1);
         }
         backendGame[blockRColum][blockRow] =
           evenStartingBlocks[getRandomIntInclusive(0, 2)];
       }
       refreshScreen(backendGame, rowSeperation);
     } else if (keys["ArrowLeft"]) {
-      for (let i = 0; i < 4; i++) {
-        currentRow = backendGame[i];
-        sortedRow = [...currentRow].sort(function (a, b) {
+      for (let i = 0; i < numOfBlocks; i++) {
+        currentRow = backendGame[i]
+        sortedColumn = [...currentRow].sort(function (a, b) {
           return a - b;
         });
-        highestVal = sortedRow[3];
-        for (let j = highestVal; j >= 2; j /= 2) {
-          checkForDupe(currentRow, j);
-          hasDupes = [...indices];
-          hasDupes.sort();
-          if (hasDupes.length > 1) {
-            if (hasDupes.length == 3) {
-              if (hasDupes[1] - hasDupes[0] == 1) {
-                currentRow[hasDupes[1]] =
-                  currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-                currentRow[hasDupes[0]] = " ";
-              } else if (currentRow[hasDupes[0] + 1] == " ") {
-                currentRow[hasDupes[1]] =
-                  currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-                currentRow[hasDupes[0]] = " ";
-              } else if (hasDupes[2] - hasDupes[1] == 1) {
-                currentRow[hasDupes[2]] =
-                  currentRow[hasDupes[1]] + currentRow[hasDupes[2]];
-                currentRow[hasDupes[1]] = " ";
-              }
-            } else if (hasDupes.length == 4) {
-              currentRow[hasDupes[0]] =
-                currentRow[hasDupes[1]] + currentRow[hasDupes[0]];
-              currentRow[hasDupes[1]] = " ";
-              currentRow[hasDupes[2]] =
-                currentRow[hasDupes[2]] + currentRow[hasDupes[3]];
-              currentRow[hasDupes[3]] = " ";
-            } else if (currentRow[hasDupes[0]] == currentRow[hasDupes[1]]) {
-              if (hasDupes[1] - hasDupes[0] == 1) {
-                currentRow[hasDupes[0]] =
-                  currentRow[hasDupes[1]] + currentRow[hasDupes[0]];
-                currentRow[hasDupes[1]] = " ";
-              } else if (
-                currentRow[hasDupes[0] + 1] == " " &&
-                currentRow[hasDupes[0] + 2] == currentRow[hasDupes[1]]
-              ) {
-                currentRow[hasDupes[0]] =
-                  currentRow[hasDupes[1]] + currentRow[hasDupes[0]];
-                currentRow[hasDupes[1]] = " ";
-              } else if (
-                currentRow[hasDupes[0] + 1] == " " &&
-                currentRow[hasDupes[0] + 2] == " " &&
-                currentRow[hasDupes[0] + 3] == currentRow[hasDupes[1]]
-              ) {
-                currentRow[hasDupes[0]] =
-                  currentRow[hasDupes[1]] + currentRow[hasDupes[0]];
-                currentRow[hasDupes[1]] = " ";
-              }
+        highestVal = sortedColumn[numOfBlocks - 1];
+        const noSpaceCol = currentRow.filter(function (x) {
+          return x !== " ";
+        });
+        if (consecutiveEqualElements(noSpaceCol) > 1)
+          for (let k = 0; k < ceeLocation.length - 1; k = k + 2) {
+            if (ceeLocation[k] != ceeLocation[k - 1]) {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k]] * 2;
+              noSpaceCol[ceeLocation[k + 1]] = " ";
+            } else {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k + 1]];
+              noSpaceCol[ceeLocation[k + 1]] = " ";
             }
           }
+        currentRow = [];
+        for (let p = 0; p < noSpaceCol.length; p++) {
+          currentRow.push(noSpaceCol[p]);
         }
-        for (
-          let k = 0;
-          k < 4 - currentRow.filter((x) => x == " ").length;
-          k++
-        ) {
-          for (let j = 3; j > 0; j = j - 1) {
-            if (currentRow[j] != " " && currentRow[j - 1] == " ") {
-              currentRow[j - 1] = currentRow[j];
-              currentRow[j] = " ";
-            }
-          }
+        for (let p = 0; p < numOfBlocks - noSpaceCol.length; p++) {
+          currentRow.push(" ");
         }
+        backendGame[i] = currentRow
       }
-      blockRow = getRandomIntInclusive(0, 3);
-      blockRColum = getRandomIntInclusive(0, 3);
-      for (let i = 0; i < 4; i++) {
+      blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+      blockRColumn = getRandomIntInclusive(0, numOfBlocks - 1);
+      for (let i = 0; i < numOfBlocks; i++) {
         if (backendGame[i].includes(" ")) {
           blankSpaces = true;
         }
@@ -927,91 +640,51 @@ window.addEventListener("keydown", function movement(obj) {
       if (blankSpaces) {
         while (backendGame[blockRColum][blockRow] != " " && blankSpaces) {
           blankSpaces = false;
-          for (let i = 0; i < 4; i++) {
+          for (let i = 0; i < numOfBlocks; i++) {
             if (backendGame[i].includes(" ")) {
               blankSpaces = true;
             }
           }
-          blockRow = getRandomIntInclusive(0, 3);
-          blockRColum = getRandomIntInclusive(0, 3);
+          blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+          blockRColum = getRandomIntInclusive(0, numOfBlocks - 1);
         }
         backendGame[blockRColum][blockRow] =
           evenStartingBlocks[getRandomIntInclusive(0, 2)];
       }
       refreshScreen(backendGame, rowSeperation);
     } else if (keys["ArrowRight"]) {
-      for (let i = 0; i < 4; i++) {
-        currentRow = backendGame[i];
-        sortedRow = [...currentRow].sort(function (a, b) {
+      for (let i = 0; i < numOfBlocks; i++) {
+        currentRow = backendGame[i]
+        sortedColumn = [...currentRow].sort(function (a, b) {
           return a - b;
         });
-        highestVal = sortedRow[3];
-        for (let j = highestVal; j >= 2; j /= 2) {
-          checkForDupe(currentRow, j);
-          hasDupes = [...indices];
-          hasDupes.sort();
-          if (hasDupes.length > 1) {
-            if (hasDupes.length == 3) {
-              if (hasDupes[2] - hasDupes[1] == 1) {
-                currentRow[hasDupes[2]] =
-                  currentRow[hasDupes[1]] + currentRow[hasDupes[2]];
-                currentRow[hasDupes[1]] = " ";
-              } else if (currentRow[hasDupes[2] - 1] == " ") {
-                currentRow[hasDupes[2]] =
-                  currentRow[hasDupes[1]] + currentRow[hasDupes[2]];
-                currentRow[hasDupes[1]] = " ";
-              } else if (hasDupes[1] - hasDupes[0] == 1) {
-                currentRow[hasDupes[1]] =
-                  currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-                currentRow[hasDupes[0]] = " ";
-              }
-            } else if (hasDupes.length == 4) {
-              currentRow[hasDupes[3]] =
-                currentRow[hasDupes[2]] + currentRow[hasDupes[3]];
-              currentRow[hasDupes[2]] = " ";
-              currentRow[hasDupes[1]] =
-                currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-              currentRow[hasDupes[0]] = " ";
-            } else if (currentRow[hasDupes[0]] == currentRow[hasDupes[1]]) {
-              if (hasDupes[1] - hasDupes[0] == 1) {
-                currentRow[hasDupes[1]] =
-                  currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-                currentRow[hasDupes[0]] = " ";
-              } else if (
-                currentRow[hasDupes[0] + 1] == " " &&
-                currentRow[hasDupes[0] + 2] == currentRow[hasDupes[1]]
-              ) {
-                currentRow[hasDupes[1]] =
-                  currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-                currentRow[hasDupes[0]] = " ";
-              } else if (
-                currentRow[hasDupes[0] + 1] == " " &&
-                currentRow[hasDupes[0] + 2] == " " &&
-                currentRow[hasDupes[0] + 3] == currentRow[hasDupes[1]]
-              ) {
-                currentRow[hasDupes[1]] =
-                  currentRow[hasDupes[0]] + currentRow[hasDupes[1]];
-                currentRow[hasDupes[0]] = " ";
-              }
+        highestVal = sortedColumn[numOfBlocks - 1];
+        const noSpaceCol = currentRow.filter(function (x) {
+          return x !== " ";
+        });
+        if (consecutiveEqualElements(noSpaceCol) > 1) {
+          for (let k = ceeLocation.length - 1; k > 0; k = k - 2) {
+            if (ceeLocation[k] != ceeLocation[k + 1]) {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k]] * 2;
+              noSpaceCol[ceeLocation[k - 1]] = " ";
+            } else {
+              noSpaceCol[ceeLocation[k]] = noSpaceCol[ceeLocation[k - 1]];
+              noSpaceCol[ceeLocation[k - 1]] = " ";
             }
           }
         }
-        for (
-          let k = 0;
-          k < 4 - currentRow.filter((x) => x == " ").length;
-          k++
-        ) {
-          for (let j = 0; j < 3; j++) {
-            if (currentRow[j] != " " && currentRow[j + 1] == " ") {
-              currentRow[j + 1] = currentRow[j];
-              currentRow[j] = " ";
-            }
-          }
+        currentRow = [];
+        for (let p = 0; p < numOfBlocks - noSpaceCol.length; p++) {
+          currentRow.push(" ");
         }
+        for (let p = 0; p < noSpaceCol.length; p++) {
+          currentRow.push(noSpaceCol[p]);
+        }
+        backendGame[i] = currentRow;
       }
-      blockRow = getRandomIntInclusive(0, 3);
-      blockRColum = getRandomIntInclusive(0, 3);
-      for (let i = 0; i < 4; i++) {
+      blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+      blockRColumn = getRandomIntInclusive(0, numOfBlocks - 1);
+      for (let i = 0; i < numOfBlocks; i++) {
         if (backendGame[i].includes(" ")) {
           blankSpaces = true;
         }
@@ -1019,13 +692,13 @@ window.addEventListener("keydown", function movement(obj) {
       if (blankSpaces) {
         while (backendGame[blockRColum][blockRow] != " " && blankSpaces) {
           blankSpaces = false;
-          for (let i = 0; i < 4; i++) {
+          for (let i = 0; i < numOfBlocks; i++) {
             if (backendGame[i].includes(" ")) {
               blankSpaces = true;
             }
           }
-          blockRow = getRandomIntInclusive(0, 3);
-          blockRColum = getRandomIntInclusive(0, 3);
+          blockRow = getRandomIntInclusive(0, numOfBlocks - 1);
+          blockRColum = getRandomIntInclusive(0, numOfBlocks - 1);
         }
         backendGame[blockRColum][blockRow] =
           evenStartingBlocks[getRandomIntInclusive(0, 2)];
